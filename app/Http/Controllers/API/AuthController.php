@@ -1,0 +1,63 @@
+<?php
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class AuthController extends Controller
+{
+    public function login(Request $request)
+    {
+        try {
+            $request->validate([
+                'username' => 'required',
+                'password' => 'required',
+            ]);
+
+            $credentials = $request->only('username', 'password');
+
+            if (!Auth::attempt($credentials)) {
+                return response()->json([
+                    'status' => 401,
+                    'message' => 'Invalid login credentials',
+                ], 200);
+            }
+
+            $user = Auth::user();
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Logged in successfully',
+                'access_token' => $token,
+                'data' => $user,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => '500',
+                'message' => 'Login failed',
+                'error' => $e->getMessage(),
+            ], 200);
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        try {
+            $user = $request->user();
+            $user->tokens()->delete();
+            return response()->json([
+                'status' => 200,
+                'message' => 'Logged out successfully',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Logout failed',
+                'error' => $e->getMessage(),
+            ], 200);
+        }
+    }
+}

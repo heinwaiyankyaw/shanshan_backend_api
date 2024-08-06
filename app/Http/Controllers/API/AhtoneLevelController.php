@@ -3,26 +3,33 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
-use App\Models\Product;
+use App\Models\AhtoneLevel;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller
+class AhtoneLevelController extends Controller
 {
     public function lists()
     {
-        $categories = Category::select('id', 'name', 'description', 'status')->get();
-        if ($categories->isEmpty()) {
+        $ahtoneLevels = AhtoneLevel::orderBy('updated_at', 'desc')->get();
+
+        if ($ahtoneLevels->isEmpty()) {
             return response()->json([
                 'status' => 404,
-                'message' => 'Category data was not found.',
+                'message' => 'Ahtone data was not found.',
                 'data' => [],
             ]);
         }
+        foreach ($ahtoneLevels as $ahtoneLevel) {
+            $data[] = [
+                'id' => $ahtoneLevel->id,
+                'name' => $ahtoneLevel->name,
+                'description' => $ahtoneLevel->description,
+            ];
+        }
         return response()->json([
             'status' => 200,
-            'message' => 'Category data was fetched.',
-            'data' => $categories]);
+            'message' => 'Ahtone Level data was fetched.',
+            'data' => $data]);
     }
 
     public function store(Request $request)
@@ -33,17 +40,17 @@ class CategoryController extends Controller
                 'description' => 'nullable',
             ]);
 
-            $category = Category::create($validatedData);
+            $ahtoneLevel = AhtoneLevel::create($validatedData);
 
             return response()->json([
                 'status' => 201,
-                'message' => 'Category created successfully.',
-                'data' => $category,
+                'message' => 'Ahtone Level created successfully.',
+                'data' => $ahtoneLevel,
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
-                'message' => 'An error occurred while creating the category.',
+                'message' => 'An error occurred while creating the Ahtone Level.',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -52,23 +59,29 @@ class CategoryController extends Controller
     public function view($id)
     {
         try {
-            $category = Category::find($id);
-            if (!$category) {
+            $ahtoneLevel = AhtoneLevel::find($id);
+
+            $ahtoneLevel = [
+                'id' => $ahtoneLevel->id,
+                'name' => $ahtoneLevel->name,
+            ];
+
+            if (!$ahtoneLevel) {
                 return response()->json([
                     'status' => 404,
-                    'message' => 'Category not found.',
+                    'message' => 'Ahtone Level not found.',
                 ]);
             }
 
             return response()->json([
                 'status' => 200,
-                'message' => 'Category data fetched successfully.',
-                'data' => $category,
+                'message' => 'Ahtone Level data fetched successfully.',
+                'data' => $ahtoneLevel,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
-                'message' => 'An error occurred while fetching the category.',
+                'message' => 'An error occurred while fetching the Ahtone Level.',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -77,31 +90,29 @@ class CategoryController extends Controller
     public function edit($id, Request $request)
     {
         try {
-            $category = Category::find($id);
+            $ahtoneLevel = AhtoneLevel::find($id);
 
-            if (!$category) {
+            if (!$ahtoneLevel) {
                 return response()->json([
                     'status' => 404,
-                    'message' => 'Category not found.',
+                    'message' => 'Ahtone Level not found.',
                 ], 404);
             }
 
             $validatedData = $request->validate([
-                'name' => 'sometimes|required|string|max:255',
-                'description' => 'nullable',
+                'name' => 'required|string|max:255',
             ]);
 
-            $category->update($validatedData);
+            $ahtoneLevel->update($validatedData);
 
             return response()->json([
                 'status' => 200,
-                'message' => 'Category updated successfully.',
-                'data' => $category,
+                'message' => 'Ahtone Level updated successfully.',
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
-                'message' => 'An error occurred while updating the category.',
+                'message' => 'An error occurred while updating the Ahtone Level.',
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -110,28 +121,23 @@ class CategoryController extends Controller
     public function delete($id)
     {
         try {
-            $category = Category::find($id);
+            $ahtoneLevel = AhtoneLevel::find($id);
 
-            if (!$category) {
+            if (!$ahtoneLevel) {
                 return response()->json([
                     'status' => 404,
-                    'message' => 'Category not found.',
+                    'message' => 'Ahtone Level not found.',
                 ]);
             }
-            $category->delete();
-            foreach ($category->products->toArray() as $checkProduct) {
-                $product = Product::where('id', $checkProduct['id'])->first();
-                $product->delete();
-            }
-
+            $ahtoneLevel->delete();
             return response()->json([
                 'status' => 200,
-                'message' => 'Category deleted successfully.',
+                'message' => 'Ahtone Level deleted successfully.',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
-                'message' => 'An error occurred while deleting the category.',
+                'message' => 'An error occurred while deleting the Ahtone Level.',
                 'error' => $e->getMessage(),
             ]);
         }

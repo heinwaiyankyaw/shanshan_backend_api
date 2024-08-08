@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('ahtone_levels', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

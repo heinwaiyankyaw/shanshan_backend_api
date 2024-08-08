@@ -3,32 +3,32 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\AhtoneLevel;
+use App\Models\PaymentType;
 use Illuminate\Http\Request;
 
-class AhtoneLevelController extends Controller
+class PaymentTypeController extends Controller
 {
     public function lists()
     {
-        $ahtoneLevels = AhtoneLevel::orderBy('updated_at', 'desc')->get();
+        $paymentTypes = PaymentType::orderBy('updated_at', 'desc')->get();
 
-        if ($ahtoneLevels->isEmpty()) {
+        if ($paymentTypes->isEmpty()) {
             return response()->json([
                 'status' => 404,
-                'message' => 'Ahtone data was not found.',
+                'message' => 'Payment Type data was not found.',
                 'data' => [],
             ]);
         }
-        foreach ($ahtoneLevels as $ahtoneLevel) {
+        foreach ($paymentTypes as $paymentType) {
             $data[] = [
-                'id' => $ahtoneLevel->id,
-                'name' => $ahtoneLevel->name,
-                'description' => $ahtoneLevel->description,
+                'id' => $paymentType->id,
+                'name' => $paymentType->name,
+                'type' => $paymentType->type,
             ];
         }
         return response()->json([
             'status' => 200,
-            'message' => 'Ahtone Level data was fetched.',
+            'message' => 'Payment Type data was fetched.',
             'data' => $data]);
     }
 
@@ -36,21 +36,21 @@ class AhtoneLevelController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'name' => 'required|string|unique:ahtone_levels,name',
-                'description' => 'nullable',
+                'name' => 'required|string|unique:payment_types,name',
+                'type' => 'required',
             ]);
 
-            $ahtoneLevel = AhtoneLevel::create($validatedData);
+            $paymentType = PaymentType::create($validatedData);
 
             return response()->json([
                 'status' => 201,
-                'message' => 'Ahtone Level created successfully.',
-                'data' => $ahtoneLevel,
+                'message' => 'SpicyLevel created successfully.',
+                'data' => $paymentType,
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
-                'message' => 'An error occurred while creating the Ahtone Level.',
+                'message' => 'An error occurred while creating the SpicyLevel.',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -59,29 +59,29 @@ class AhtoneLevelController extends Controller
     public function view($id)
     {
         try {
-            $ahtoneLevel = AhtoneLevel::find($id);
+            $paymentType = PaymentType::find($id);
 
-            $ahtoneLevel = [
-                'id' => $ahtoneLevel->id,
-                'name' => $ahtoneLevel->name,
+            $paymentType = [
+                'id' => $paymentType->id,
+                'name' => $paymentType->name,
             ];
 
-            if (!$ahtoneLevel) {
+            if (!$paymentType) {
                 return response()->json([
                     'status' => 404,
-                    'message' => 'Ahtone Level not found.',
+                    'message' => 'Payment Type not found.',
                 ]);
             }
 
             return response()->json([
                 'status' => 200,
-                'message' => 'Ahtone Level data fetched successfully.',
-                'data' => $ahtoneLevel,
+                'message' => 'Payment Type data fetched successfully.',
+                'data' => $paymentType,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
-                'message' => 'An error occurred while fetching the Ahtone Level.',
+                'message' => 'An error occurred while fetching the Payment Type.',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -90,29 +90,30 @@ class AhtoneLevelController extends Controller
     public function edit($id, Request $request)
     {
         try {
-            $ahtoneLevel = AhtoneLevel::find($id);
+            $paymentType = PaymentType::find($id);
 
-            if (!$ahtoneLevel) {
+            if (!$paymentType) {
                 return response()->json([
                     'status' => 404,
-                    'message' => 'Ahtone Level not found.',
+                    'message' => 'Payment Type not found.',
                 ], 404);
             }
 
             $validatedData = $request->validate([
-                'name' => 'required|string|unique:ahtone_levels,name' . ",$id",
+                'name' => 'required|string|unique:payment_types,name' . ",$id",
+                'type' => 'required',
             ]);
 
-            $ahtoneLevel->update($validatedData);
+            $paymentType->update($validatedData);
 
             return response()->json([
                 'status' => 200,
-                'message' => 'Ahtone Level updated successfully.',
+                'message' => 'Payment Type updated successfully.',
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
-                'message' => 'An error occurred while updating the Ahtone Level.',
+                'message' => 'An error occurred while updating the Payment Type.',
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -121,23 +122,23 @@ class AhtoneLevelController extends Controller
     public function delete($id)
     {
         try {
-            $ahtoneLevel = AhtoneLevel::find($id);
+            $paymentType = PaymentType::find($id);
 
-            if (!$ahtoneLevel) {
+            if (!$paymentType) {
                 return response()->json([
                     'status' => 404,
-                    'message' => 'Ahtone Level not found.',
+                    'message' => 'Payment Type not found.',
                 ]);
             }
-            $ahtoneLevel->delete();
+            $paymentType->delete();
             return response()->json([
                 'status' => 200,
-                'message' => 'Ahtone Level deleted successfully.',
+                'message' => 'Payment Type deleted successfully.',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
-                'message' => 'An error occurred while deleting the Ahtone Level.',
+                'message' => 'An error occurred while deleting the Payment Type.',
                 'error' => $e->getMessage(),
             ]);
         }

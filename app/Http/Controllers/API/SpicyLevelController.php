@@ -36,7 +36,7 @@ class SpicyLevelController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|unique:spicy_levels,name',
                 'description' => 'nullable',
             ]);
 
@@ -100,7 +100,7 @@ class SpicyLevelController extends Controller
             }
 
             $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|unique:spicy_levels,name' . ",$id",
             ]);
 
             $spicyLevel->update($validatedData);

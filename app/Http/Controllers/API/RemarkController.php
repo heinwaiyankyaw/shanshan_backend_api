@@ -3,32 +3,32 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\AhtoneLevel;
+use App\Models\Remark;
 use Illuminate\Http\Request;
 
-class AhtoneLevelController extends Controller
+class RemarkController extends Controller
 {
     public function lists()
     {
-        $ahtoneLevels = AhtoneLevel::orderBy('updated_at', 'desc')->get();
+        $remarks = Remark::orderBy('updated_at', 'desc')->get();
 
-        if ($ahtoneLevels->isEmpty()) {
+        if ($remarks->isEmpty()) {
             return response()->json([
                 'status' => 404,
-                'message' => 'Ahtone data was not found.',
+                'message' => 'Remark data was not found.',
                 'data' => [],
             ]);
         }
-        foreach ($ahtoneLevels as $ahtoneLevel) {
+        foreach ($remarks as $remark) {
             $data[] = [
-                'id' => $ahtoneLevel->id,
-                'name' => $ahtoneLevel->name,
-                'description' => $ahtoneLevel->description,
+                'id' => $remark->id,
+                'name' => $remark->name,
+                'description' => $remark->description,
             ];
         }
         return response()->json([
             'status' => 200,
-            'message' => 'Ahtone Level data was fetched.',
+            'message' => 'Remark data was fetched.',
             'data' => $data]);
     }
 
@@ -36,21 +36,21 @@ class AhtoneLevelController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'name' => 'required|string|unique:ahtone_levels,name',
+                'name' => 'required|string|unique:spicy_levels,name',
                 'description' => 'nullable',
             ]);
 
-            $ahtoneLevel = AhtoneLevel::create($validatedData);
+            $remark = Remark::create($validatedData);
 
             return response()->json([
                 'status' => 201,
-                'message' => 'Ahtone Level created successfully.',
-                'data' => $ahtoneLevel,
+                'message' => 'SpicyLevel created successfully.',
+                'data' => $remark,
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
-                'message' => 'An error occurred while creating the Ahtone Level.',
+                'message' => 'An error occurred while creating the SpicyLevel.',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -59,29 +59,29 @@ class AhtoneLevelController extends Controller
     public function view($id)
     {
         try {
-            $ahtoneLevel = AhtoneLevel::find($id);
+            $remark = Remark::find($id);
 
-            $ahtoneLevel = [
-                'id' => $ahtoneLevel->id,
-                'name' => $ahtoneLevel->name,
+            $remark = [
+                'id' => $remark->id,
+                'name' => $remark->name,
             ];
 
-            if (!$ahtoneLevel) {
+            if (!$remark) {
                 return response()->json([
                     'status' => 404,
-                    'message' => 'Ahtone Level not found.',
+                    'message' => 'Remark not found.',
                 ]);
             }
 
             return response()->json([
                 'status' => 200,
-                'message' => 'Ahtone Level data fetched successfully.',
-                'data' => $ahtoneLevel,
+                'message' => 'Remark data fetched successfully.',
+                'data' => $remark,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
-                'message' => 'An error occurred while fetching the Ahtone Level.',
+                'message' => 'An error occurred while fetching the Remark.',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -90,29 +90,29 @@ class AhtoneLevelController extends Controller
     public function edit($id, Request $request)
     {
         try {
-            $ahtoneLevel = AhtoneLevel::find($id);
+            $remark = Remark::find($id);
 
-            if (!$ahtoneLevel) {
+            if (!$remark) {
                 return response()->json([
                     'status' => 404,
-                    'message' => 'Ahtone Level not found.',
+                    'message' => 'Remark not found.',
                 ], 404);
             }
 
             $validatedData = $request->validate([
-                'name' => 'required|string|unique:ahtone_levels,name' . ",$id",
+                'name' => 'required|string|unique:spicy_levels,name' . ",$id",
             ]);
 
-            $ahtoneLevel->update($validatedData);
+            $remark->update($validatedData);
 
             return response()->json([
                 'status' => 200,
-                'message' => 'Ahtone Level updated successfully.',
+                'message' => 'Remark updated successfully.',
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
-                'message' => 'An error occurred while updating the Ahtone Level.',
+                'message' => 'An error occurred while updating the Remark.',
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -121,23 +121,23 @@ class AhtoneLevelController extends Controller
     public function delete($id)
     {
         try {
-            $ahtoneLevel = AhtoneLevel::find($id);
+            $remark = Remark::find($id);
 
-            if (!$ahtoneLevel) {
+            if (!$remark) {
                 return response()->json([
                     'status' => 404,
-                    'message' => 'Ahtone Level not found.',
+                    'message' => 'Remark not found.',
                 ]);
             }
-            $ahtoneLevel->delete();
+            $remark->delete();
             return response()->json([
                 'status' => 200,
-                'message' => 'Ahtone Level deleted successfully.',
+                'message' => 'Remark deleted successfully.',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
-                'message' => 'An error occurred while deleting the Ahtone Level.',
+                'message' => 'An error occurred while deleting the Remark.',
                 'error' => $e->getMessage(),
             ]);
         }

@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('spicy_levels', function (Blueprint $table) {
+        Schema::create('payment_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
-            $table->text('description')->nullable();
+            $table->string('name');
+            $table->string('type');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('spicy_levels');
+        Schema::dropIfExists('payment_types');
     }
 };

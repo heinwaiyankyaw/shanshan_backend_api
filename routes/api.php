@@ -4,7 +4,9 @@ use App\Http\Controllers\API\AhtoneLevelController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\MenuController;
+use App\Http\Controllers\API\PaymentTypeController;
 use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\API\RemarkController;
 use App\Http\Controllers\API\SpicyLevelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -55,6 +57,22 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('{id}', [AhtoneLevelController::class, 'view']);
         Route::post('edit/{id}', [AhtoneLevelController::class, 'edit']);
         Route::delete('delete/{id}', [AhtoneLevelController::class, 'delete']);
+    });
+
+    Route::prefix('remark')->group(function () {
+        Route::get('/', [RemarkController::class, 'lists']);
+        Route::post('store', [RemarkController::class, 'store']);
+        Route::get('{id}', [RemarkController::class, 'view']);
+        Route::post('edit/{id}', [RemarkController::class, 'edit']);
+        Route::delete('delete/{id}', [RemarkController::class, 'delete']);
+    });
+
+    Route::prefix('payment-type')->group(function () {
+        Route::get('/', [PaymentTypeController::class, 'lists']);
+        Route::post('store', [PaymentTypeController::class, 'store']);
+        Route::get('{id}', [PaymentTypeController::class, 'view']);
+        Route::post('edit/{id}', [PaymentTypeController::class, 'edit']);
+        Route::delete('delete/{id}', [PaymentTypeController::class, 'delete']);
     });
 
     Route::post('logout', [AuthController::class, 'logout']);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -29,7 +30,7 @@ class CategoryController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|max:255|unique:categories,name',
                 'description' => 'nullable',
             ]);
 
@@ -87,7 +88,7 @@ class CategoryController extends Controller
             }
 
             $validatedData = $request->validate([
-                'name' => 'sometimes|required|string|max:255',
+                'name' => 'required|string|unique:categories,name' . ",$id",
                 'description' => 'nullable',
             ]);
 
@@ -134,6 +135,48 @@ class CategoryController extends Controller
                 'message' => 'An error occurred while deleting the category.',
                 'error' => $e->getMessage(),
             ]);
+        }
+    }
+
+    public function categoryByProduct($id)
+    {
+        try {
+            $category = Category::findOrFail($id);
+            $products = Product::where('category_id', $category->id)->get();
+            if ($products->isEmpty()) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Category with Relate Product Not Found.',
+                    'data' => [],
+                ]);
+            }
+            foreach ($products as $product) {
+                $data[] = [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'qty' => $product->is_gram ? $product->qty . " g" : $product->qty,
+                    'prices' => $product->prices . " MMK",
+                    'category' => $product->category->name,
+                ];
+            }
+            return response()->json([
+                'status' => 200,
+                'message' => 'Product data was fetched.',
+                'data' => $data,
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Model Not Found Exception',
+                'errors' => $e->getMessage(),
+            ]);
+        } catch (Exception $th) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Unknown',
+                'errors' => $e->getMessage(),
+            ]);
+
         }
     }
 }

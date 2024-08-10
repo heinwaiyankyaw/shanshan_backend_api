@@ -39,7 +39,7 @@ class ProductController extends Controller
         try {
             $validatedData = $request->validate([
                 'category_id' => 'required',
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|unique:products,name',
                 'qty' => 'required',
                 'is_gram' => 'required|boolean',
                 'prices' => 'required',
@@ -109,7 +109,7 @@ class ProductController extends Controller
 
             $validatedData = $request->validate([
                 'category_id' => 'required',
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|unique:products,name' . ",$id",
                 'qty' => 'required',
                 'is_gram' => 'required|boolean',
                 'prices' => 'required',

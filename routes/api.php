@@ -7,13 +7,9 @@ use App\Http\Controllers\API\MenuController;
 use App\Http\Controllers\API\PaymentTypeController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\RemarkController;
+use App\Http\Controllers\API\SaleController;
 use App\Http\Controllers\API\SpicyLevelController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
 
 Route::post('login', [AuthController::class, 'login']);
 
@@ -25,6 +21,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('{id}', [CategoryController::class, 'view']);
         Route::post('edit/{id}', [CategoryController::class, 'edit']);
         Route::delete('delete/{id}', [CategoryController::class, 'delete']);
+        Route::post('by-product/{id}', [CategoryController::class, 'categoryByProduct']);
     });
 
     Route::prefix('product')->group(function () {
@@ -73,6 +70,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('{id}', [PaymentTypeController::class, 'view']);
         Route::post('edit/{id}', [PaymentTypeController::class, 'edit']);
         Route::delete('delete/{id}', [PaymentTypeController::class, 'delete']);
+    });
+
+    Route::prefix('sale')->group(function () {
+        Route::post('/', [SaleController::class, 'store']);
+        Route::get('lists', [SaleController::class, 'lists']);
+
+        Route::get('daily', [SaleController::class, 'daily']);
+        Route::get('weekly', [SaleController::class, 'weekly']);
+        Route::get('pastMonth', [SaleController::class, 'pastMonth']);
+        Route::get('currentMonth', [SaleController::class, 'currentMonth']);
+
     });
 
     Route::post('logout', [AuthController::class, 'logout']);

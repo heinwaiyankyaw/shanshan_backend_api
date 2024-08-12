@@ -155,6 +155,7 @@ class CategoryController extends Controller
                     'id' => $product->id,
                     'name' => $product->name,
                     'qty' => $product->is_gram ? $product->qty . " g" : $product->qty,
+                    'is_gram' => $product->is_gram,
                     'prices' => $product->prices . " MMK",
                     'category' => $product->category->name,
                 ];

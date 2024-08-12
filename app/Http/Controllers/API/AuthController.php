@@ -27,12 +27,18 @@ class AuthController extends Controller
 
             $user = Auth::user();
             $token = $user->createToken('auth_token')->plainTextToken;
-
+            $data = [
+                'id' => $user->id,
+                'username' => $user->username,
+                'email' => $user->email,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+                'access_token' => $token,
+            ];
             return response()->json([
                 'status' => 200,
                 'message' => 'Logged in successfully',
-                'access_token' => $token,
-                'data' => $user,
+                'data' => $data,
             ]);
         } catch (\Exception $e) {
             return response()->json([

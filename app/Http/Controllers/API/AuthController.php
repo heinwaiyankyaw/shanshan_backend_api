@@ -66,4 +66,31 @@ class AuthController extends Controller
             ], 200);
         }
     }
+
+    public function checkLogin()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'User is not right to login.',
+                'data' => [],
+            ], 200);
+
+        }
+        $data = [
+            'id' => $user->id,
+            'username' => $user->username,
+            'email' => $user->email,
+            'created_at' => $user->created_at,
+            'updated_at' => $user->updated_at,
+            'access_token' => $token,
+        ];
+        return response()->json([
+            'status' => 200,
+            'message' => 'User Check successful',
+            'data' => $data,
+        ]);
+
+    }
 }

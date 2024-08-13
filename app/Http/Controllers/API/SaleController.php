@@ -263,7 +263,7 @@ class SaleController extends Controller
     protected function checkValidation($request)
     {
         return Validator::make($request->all(), [
-            'payment_type_id' => 'required',
+            'payment_type_id' => 'nullable',
             'menu_id' => 'required',
             'spicy_level_id' => 'required',
             'ahtone_level_id' => 'required',

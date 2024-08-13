@@ -23,7 +23,6 @@ class ProductController extends Controller
             $data[] = [
                 'id' => $product->id,
                 'name' => $product->name,
-                // 'qty' => $product->is_gram ? $product->qty . " g" : $product->qty,
                 'qty' => $product->qty,
                 'is_gram' => $product->is_gram ? true : false,
                 'prices' => $product->prices * 1,
@@ -46,6 +45,12 @@ class ProductController extends Controller
                 'is_gram' => 'required|boolean',
                 'prices' => 'required',
             ]);
+
+            if ($validatedData['is_gram'] === true) {
+                $validatedData['is_gram'] = 1;
+            } else {
+                $validatedData['is_gram'] = 0;
+            }
 
             $product = Product::create($validatedData);
 
@@ -71,8 +76,9 @@ class ProductController extends Controller
             $product = [
                 'id' => $product->id,
                 'name' => $product->name,
-                'qty' => $product->is_gram ? $product->qty . "g" : $product->qty,
-                'prices' => $product->prices . " MMK",
+                'qty' => $product->qty,
+                'is_gram' => $product->is_gram ? true : false,
+                'prices' => $product->prices * 1,
                 'category' => $product->category->name,
             ];
 
@@ -116,6 +122,12 @@ class ProductController extends Controller
                 'is_gram' => 'required|boolean',
                 'prices' => 'required',
             ]);
+
+            if ($validatedData['is_gram'] === true) {
+                $validatedData['is_gram'] = 1;
+            } else {
+                $validatedData['is_gram'] = 0;
+            }
 
             $product->update($validatedData);
 

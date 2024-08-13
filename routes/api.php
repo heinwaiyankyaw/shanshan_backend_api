@@ -12,7 +12,7 @@ use App\Http\Controllers\API\SpicyLevelController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login']);
-
+Route::get('checkLogin', [AuthController::class, 'checkLogin']);
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::prefix('category')->group(function () {

@@ -67,30 +67,29 @@ class AuthController extends Controller
         }
     }
 
-    public function checkLogin()
+    public function checkLogin(Request $request)
     {
-        $user = Auth::user();
+        $user = Auth::guard('api')->user();
         if (!$user) {
             return response()->json([
-                'status' => 500,
-                'message' => 'User is not right to login.',
+                'status' => 401,
+                'message' => 'Unauthorized. Please log in.',
                 'data' => [],
-            ], 200);
-
+            ], 401);
         }
+
         $data = [
             'id' => $user->id,
             'username' => $user->username,
             'email' => $user->email,
             'created_at' => $user->created_at,
             'updated_at' => $user->updated_at,
-            'access_token' => $token,
         ];
+
         return response()->json([
             'status' => 200,
-            'message' => 'User Check successful',
+            'message' => 'User check successful',
             'data' => $data,
         ]);
-
     }
 }

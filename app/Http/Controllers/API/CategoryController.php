@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
@@ -30,7 +31,12 @@ class CategoryController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'name' => 'required|string|max:255|unique:categories,name',
+                // 'name' => 'required|string|max:255|unique:categories,name',
+                'name' => [
+                    'required',
+                    'string',
+                    Rule::unique('categories')->whereNull('deleted_at'),
+                ],
                 'description' => 'nullable',
             ]);
 
@@ -88,7 +94,11 @@ class CategoryController extends Controller
             }
 
             $validatedData = $request->validate([
-                'name' => 'required|string|unique:categories,name' . ",$id",
+                'name' => [
+                    'required',
+                    'string',
+                    Rule::unique('categories')->ignore($id)->whereNull('deleted_at'),
+                ],
                 'description' => 'nullable',
             ]);
 

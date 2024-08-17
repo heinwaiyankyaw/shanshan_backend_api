@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\SpicyLevel;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class SpicyLevelController extends Controller
 {
@@ -36,7 +37,11 @@ class SpicyLevelController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'name' => 'required|string|unique:spicy_levels,name',
+                'name' => [
+                    'required',
+                    'string',
+                    Rule::unique('spicy_levels')->whereNull('deleted_at'),
+                ],
                 'description' => 'nullable',
             ]);
 
@@ -100,7 +105,11 @@ class SpicyLevelController extends Controller
             }
 
             $validatedData = $request->validate([
-                'name' => 'required|string|unique:spicy_levels,name' . ",$id",
+                'name' => [
+                    'required',
+                    'string',
+                    Rule::unique('spicy_levels')->ignore($id)->whereNull('deleted_at'),
+                ],
             ]);
 
             $spicyLevel->update($validatedData);

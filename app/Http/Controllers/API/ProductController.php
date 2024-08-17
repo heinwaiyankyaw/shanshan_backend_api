@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -40,7 +41,11 @@ class ProductController extends Controller
         try {
             $validatedData = $request->validate([
                 'category_id' => 'required',
-                'name' => 'required|string|unique:products,name',
+                'name' => [
+                    'required',
+                    'string',
+                    Rule::unique('products')->whereNull('deleted_at'),
+                ],
                 'qty' => 'required',
                 'is_gram' => 'required|boolean',
                 'prices' => 'required',
@@ -117,7 +122,11 @@ class ProductController extends Controller
 
             $validatedData = $request->validate([
                 'category_id' => 'required',
-                'name' => 'required|string|unique:products,name' . ",$id",
+                'name' => [
+                    'required',
+                    'string',
+                    Rule::unique('products')->ignore($id)->whereNull('deleted_at'),
+                ],
                 'qty' => 'required',
                 'is_gram' => 'required|boolean',
                 'prices' => 'required',

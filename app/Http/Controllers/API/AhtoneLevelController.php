@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\AhtoneLevel;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AhtoneLevelController extends Controller
 {
@@ -36,7 +37,11 @@ class AhtoneLevelController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'name' => 'required|string|unique:ahtone_levels,name',
+                'name' => [
+                    'required',
+                    'string',
+                    Rule::unique('ahtone_levels')->whereNull('deleted_at'),
+                ],
                 'description' => 'nullable',
             ]);
 
@@ -100,7 +105,12 @@ class AhtoneLevelController extends Controller
             }
 
             $validatedData = $request->validate([
-                'name' => 'required|string|unique:ahtone_levels,name' . ",$id",
+                // 'name' => 'required|string|unique:ahtone_levels,name' . ",$id",
+                'name' => [
+                    'required',
+                    'string',
+                    Rule::unique('ahtone_levels')->ignore($id)->whereNull('deleted_at'),
+                ],
             ]);
 
             $ahtoneLevel->update($validatedData);

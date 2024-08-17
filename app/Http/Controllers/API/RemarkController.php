@@ -110,6 +110,7 @@ class RemarkController extends Controller
                     'string',
                     Rule::unique('remarks')->ignore($id)->whereNull('deleted_at'),
                 ],
+                'description' => 'nullable',
             ]);
 
             $remark->update($validatedData);

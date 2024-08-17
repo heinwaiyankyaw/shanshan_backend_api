@@ -111,6 +111,7 @@ class AhtoneLevelController extends Controller
                     'string',
                     Rule::unique('ahtone_levels')->ignore($id)->whereNull('deleted_at'),
                 ],
+                'description' => 'nullable',
             ]);
 
             $ahtoneLevel->update($validatedData);

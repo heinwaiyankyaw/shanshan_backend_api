@@ -110,6 +110,7 @@ class SpicyLevelController extends Controller
                     'string',
                     Rule::unique('spicy_levels')->ignore($id)->whereNull('deleted_at'),
                 ],
+                'description' => 'nullable',
             ]);
 
             $spicyLevel->update($validatedData);

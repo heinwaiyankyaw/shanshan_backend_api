@@ -48,7 +48,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('delete/{id}', [SpicyLevelController::class, 'delete']);
     });
 
-    Route::prefix('ahtone-level')->group(function () {
+    // Route::prefix('ahtone-level')->group(function () {
+    //     Route::get('/', [AhtoneLevelController::class, 'lists']);
+    //     Route::post('store', [AhtoneLevelController::class, 'store']);
+    //     Route::get('{id}', [AhtoneLevelController::class, 'view']);
+    //     Route::post('edit/{id}', [AhtoneLevelController::class, 'edit']);
+    //     Route::delete('delete/{id}', [AhtoneLevelController::class, 'delete']);
+    // });
+
+    Route::prefix('htone-level')->group(function () {
         Route::get('/', [AhtoneLevelController::class, 'lists']);
         Route::post('store', [AhtoneLevelController::class, 'store']);
         Route::get('{id}', [AhtoneLevelController::class, 'view']);

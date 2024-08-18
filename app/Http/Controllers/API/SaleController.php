@@ -173,14 +173,16 @@ class SaleController extends Controller
     {
         $startOfWeek = Carbon::now()->startOfWeek()->toDateString();
         $endOfWeek = Carbon::now()->endOfWeek()->toDateString();
-        $sales = Sale::whereBetween('created_at', [$startOfWeek, $endOfWeek])
+        $sales = Sale::whereDate('created_at', '>=', $startOfWeek)
+            ->whereDate('created_at', '<=', $endOfWeek)
             ->get();
 
+        // $sales = Sale::where('created_at', $startOfWeek)->where('created_at', $endOfWeek)->get();
         $totalSales = $sales->count();
         $totalPaidCash = $sales->sum('paid_cash');
         $totalPaidOnline = $sales->sum('paid_online');
         $totalGrand = $sales->sum('grand_total');
-
+        // dd($totalPaidCash);
         $data = [
             'total_sales' => $totalSales,
             'total_paid_cash' => $totalPaidCash,

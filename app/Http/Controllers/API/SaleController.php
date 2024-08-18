@@ -145,10 +145,13 @@ class SaleController extends Controller
         $totalSales = $sales->count();
         $totalPaidCash = $sales->sum('paid_cash');
         $totalPaidOnline = $sales->sum('paid_online');
+        $totalGrand = $sales->sum('grand_total');
         $data = [
             'total_sales' => $totalSales,
             'total_paid_cash' => $totalPaidCash,
             'total_paid_online' => $totalPaidOnline,
+            'daily_date' => $date,
+            'total_Grands' => $totalGrand,
         ];
 
         if ($sales->isEmpty()) {
@@ -176,10 +179,15 @@ class SaleController extends Controller
         $totalSales = $sales->count();
         $totalPaidCash = $sales->sum('paid_cash');
         $totalPaidOnline = $sales->sum('paid_online');
+        $totalGrand = $sales->sum('grand_total');
+
         $data = [
             'total_sales' => $totalSales,
             'total_paid_cash' => $totalPaidCash,
             'total_paid_online' => $totalPaidOnline,
+            'start_of_week' => $startOfWeek,
+            'end_of_week' => $endOfWeek,
+            'total_Grands' => $totalGrand,
         ];
 
         if ($sales->isEmpty()) {
@@ -208,10 +216,14 @@ class SaleController extends Controller
         $totalSales = $sales->count();
         $totalPaidCash = $sales->sum('paid_cash');
         $totalPaidOnline = $sales->sum('paid_online');
+        $totalGrand = $sales->sum('grand_total');
+
         $data = [
             'total_sales' => $totalSales,
             'total_paid_cash' => $totalPaidCash,
             'total_paid_online' => $totalPaidOnline,
+            'past_month' => Carbon::now()->subMonth()->format('Y-m'),
+            'total_Grands' => $totalGrand,
         ];
 
         if ($sales->isEmpty()) {
@@ -239,10 +251,14 @@ class SaleController extends Controller
         $totalSales = $sales->count();
         $totalPaidCash = $sales->sum('paid_cash');
         $totalPaidOnline = $sales->sum('paid_online');
+        $totalGrand = $sales->sum('grand_total');
+
         $data = [
             'total_sales' => $totalSales,
             'total_paid_cash' => $totalPaidCash,
             'total_paid_online' => $totalPaidOnline,
+            'current_month' => Carbon::now()->format('Y-m'),
+            'total_Grands' => $totalGrand,
         ];
 
         if ($sales->isEmpty()) {

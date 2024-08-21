@@ -287,8 +287,8 @@ class SaleController extends Controller
         return Validator::make($request->all(), [
             'payment_type_id' => 'nullable',
             'menu_id' => 'required',
-            'spicy_level_id' => 'required',
-            'ahtone_level_id' => 'required',
+            'spicy_level_id' => 'nullable',
+            'ahtone_level_id' => 'nullable',
             'remark_id' => 'nullable',
             'order_no' => 'required',
             'table_number' => 'required',

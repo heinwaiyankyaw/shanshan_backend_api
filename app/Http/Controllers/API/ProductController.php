@@ -26,6 +26,7 @@ class ProductController extends Controller
                 'name' => $product->name,
                 'qty' => $product->qty,
                 'is_gram' => $product->is_gram ? true : false,
+                'is_default' => $product->is_default ? true : false,
                 'prices' => $product->prices * 1,
                 'category' => $product->category->name,
             ];
@@ -48,6 +49,7 @@ class ProductController extends Controller
                 ],
                 'qty' => 'required',
                 'is_gram' => 'required|boolean',
+                'is_default' => 'required|boolean',
                 'prices' => 'required',
             ]);
 
@@ -55,6 +57,12 @@ class ProductController extends Controller
                 $validatedData['is_gram'] = 1;
             } else {
                 $validatedData['is_gram'] = 0;
+            }
+
+            if ($validatedData['is_default'] === true) {
+                $validatedData['is_default'] = 1;
+            } else {
+                $validatedData['is_default'] = 0;
             }
 
             $product = Product::create($validatedData);
@@ -83,6 +91,7 @@ class ProductController extends Controller
                 'name' => $product->name,
                 'qty' => $product->qty,
                 'is_gram' => $product->is_gram ? true : false,
+                'is_default' => $product->is_default ? true : false,
                 'prices' => $product->prices * 1,
                 'category' => $product->category->name,
             ];
@@ -129,6 +138,7 @@ class ProductController extends Controller
                 ],
                 'qty' => 'required',
                 'is_gram' => 'required|boolean',
+                'is_default' => 'required|boolean',
                 'prices' => 'required',
             ]);
 
@@ -136,6 +146,12 @@ class ProductController extends Controller
                 $validatedData['is_gram'] = 1;
             } else {
                 $validatedData['is_gram'] = 0;
+            }
+
+            if ($validatedData['is_default'] === true) {
+                $validatedData['is_default'] = 1;
+            } else {
+                $validatedData['is_default'] = 0;
             }
 
             $product->update($validatedData);

@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Models\AhtoneLevel;
 use App\Models\Menu;
 use App\Models\PaymentType;
-use App\Models\Remark;
 use App\Models\SpicyLevel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,7 +21,7 @@ class Sale extends Model
         "menu_id",
         "spicy_level_id",
         "ahtone_level_id",
-        "remark_id",
+        "remark",
         "table_number",
         "order_no",
         "dine_in_or_percel",
@@ -55,10 +54,10 @@ class Sale extends Model
         return $this->belongsTo(AhtoneLevel::class);
     }
 
-    public function remark()
-    {
-        return $this->belongsTo(Remark::class);
-    }
+    // public function remark()
+    // {
+    //     return $this->belongsTo(Remark::class);
+    // }
 
     public function saleItems()
     {

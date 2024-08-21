@@ -21,7 +21,7 @@ class SaleController extends Controller
             $currentMonthSales = Sale::whereYear('updated_at', Carbon::now()->year)
                 ->whereMonth('updated_at', Carbon::now()->month)
                 ->orderBy('updated_at', 'desc')
-                ->with(['paymentType', 'menu', 'spicyLevel', 'ahtoneLevel', 'remark', 'saleItems'])
+                ->with(['paymentType', 'menu', 'spicyLevel', 'ahtoneLevel', 'saleItems'])
                 ->paginate($perPage, ['*'], 'page', $page);
 
             if ($currentMonthSales->count() < 0) {
@@ -74,10 +74,7 @@ class SaleController extends Controller
                         'id' => $currentMonthSale->ahtoneLevel->id,
                         'name' => $currentMonthSale->ahtoneLevel->name,
                     ],
-                    'remark' => [
-                        'id' => $currentMonthSale->remark->id ?? null,
-                        'name' => $currentMonthSale->remark->name ?? null,
-                    ],
+                    'remark' => $currentMonthSale->remark,
                     'products' => $products,
                 ];
             }
@@ -289,7 +286,7 @@ class SaleController extends Controller
             'menu_id' => 'required',
             'spicy_level_id' => 'nullable',
             'ahtone_level_id' => 'nullable',
-            'remark_id' => 'nullable',
+            'remark' => 'nullable',
             'order_no' => 'required',
             'table_number' => 'required',
             'dine_in_or_percel' => 'required|boolean',

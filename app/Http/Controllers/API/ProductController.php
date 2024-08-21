@@ -11,7 +11,7 @@ class ProductController extends Controller
 {
     public function lists()
     {
-        $products = Product::select('id', 'name', 'qty', 'is_gram', 'prices', 'category_id')->with('category')->get();
+        $products = Product::select('id', 'name', 'qty', 'is_gram', 'prices', 'category_id', 'is_default')->with('category')->get();
 
         if ($products->isEmpty()) {
             return response()->json([
@@ -28,6 +28,7 @@ class ProductController extends Controller
                 'is_gram' => $product->is_gram ? true : false,
                 'is_default' => $product->is_default ? true : false,
                 'prices' => $product->prices * 1,
+                'category_id' => $product->category_id,
                 'category' => $product->category->name,
             ];
         }
@@ -93,6 +94,7 @@ class ProductController extends Controller
                 'is_gram' => $product->is_gram ? true : false,
                 'is_default' => $product->is_default ? true : false,
                 'prices' => $product->prices * 1,
+                'category_id' => $product->category_id,
                 'category' => $product->category->name,
             ];
 

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('menu_id')->nullable()->constrained('menus');
             $table->foreignId('spicy_level_id')->nullable()->constrained('spicy_levels');
             $table->foreignId('ahtone_level_id')->nullable()->constrained('ahtone_levels');
-            $table->foreignId('remark_id')->nullable()->constrained('remarks');
+            $table->text('remark')->nullable();
             $table->string('order_no')->nullable();
             $table->string('table_number')->nullable();
             $table->boolean('dine_in_or_percel')->default(0);

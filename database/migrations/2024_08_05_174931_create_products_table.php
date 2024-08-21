@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('qty')->default(0);
             $table->decimal('prices', 15, 2)->nullable();
             $table->boolean('is_gram')->default(false);
+            $table->boolean('is_default')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

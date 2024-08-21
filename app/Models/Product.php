@@ -18,6 +18,7 @@ class Product extends Model
         'qty',
         'is_gram',
         'prices',
+        'is_default',
     ];
 
     public function category()

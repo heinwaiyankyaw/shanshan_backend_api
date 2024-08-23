@@ -11,7 +11,7 @@ class AhtoneLevelController extends Controller
 {
     public function lists()
     {
-        $ahtoneLevels = AhtoneLevel::orderBy('updated_at', 'desc')->get();
+        $ahtoneLevels = AhtoneLevel::orderBy('position', 'asc')->get();
 
         if ($ahtoneLevels->isEmpty()) {
             return response()->json([
@@ -25,6 +25,7 @@ class AhtoneLevelController extends Controller
                 'id' => $ahtoneLevel->id,
                 'name' => $ahtoneLevel->name,
                 'description' => $ahtoneLevel->description,
+                'position' => $ahtoneLevel->position,
             ];
         }
         return response()->json([
@@ -43,6 +44,10 @@ class AhtoneLevelController extends Controller
                     Rule::unique('ahtone_levels')->whereNull('deleted_at'),
                 ],
                 'description' => 'nullable',
+                'position' => [
+                    'required',
+                    Rule::unique('ahtone_levels')->whereNull('deleted_at'),
+                ],
             ]);
 
             $ahtoneLevel = AhtoneLevel::create($validatedData);
@@ -69,6 +74,8 @@ class AhtoneLevelController extends Controller
             $ahtoneLevel = [
                 'id' => $ahtoneLevel->id,
                 'name' => $ahtoneLevel->name,
+                'description' => $ahtoneLevel->description,
+                'position' => $ahtoneLevel->position,
             ];
 
             if (!$ahtoneLevel) {
@@ -112,6 +119,10 @@ class AhtoneLevelController extends Controller
                     Rule::unique('ahtone_levels')->ignore($id)->whereNull('deleted_at'),
                 ],
                 'description' => 'nullable',
+                'position' => [
+                    'required',
+                    Rule::unique('ahtone_levels')->ignore($id)->whereNull('deleted_at'),
+                ],
             ]);
 
             $ahtoneLevel->update($validatedData);

@@ -11,7 +11,7 @@ class SpicyLevelController extends Controller
 {
     public function lists()
     {
-        $spicyLevels = SpicyLevel::orderBy('updated_at', 'desc')->get();
+        $spicyLevels = SpicyLevel::orderBy('position', 'asc')->get();
 
         if ($spicyLevels->isEmpty()) {
             return response()->json([
@@ -25,6 +25,7 @@ class SpicyLevelController extends Controller
                 'id' => $spicyLevel->id,
                 'name' => $spicyLevel->name,
                 'description' => $spicyLevel->description,
+                'position' => $spicyLevel->position,
             ];
         }
         return response()->json([
@@ -43,6 +44,7 @@ class SpicyLevelController extends Controller
                     Rule::unique('spicy_levels')->whereNull('deleted_at'),
                 ],
                 'description' => 'nullable',
+                'position' => ['required', Rule::unique('spicy_levels')->whereNull('deleted_at')],
             ]);
 
             $spicyLevel = SpicyLevel::create($validatedData);
@@ -69,6 +71,8 @@ class SpicyLevelController extends Controller
             $spicyLevel = [
                 'id' => $spicyLevel->id,
                 'name' => $spicyLevel->name,
+                'description' => $spicyLevel->description,
+                'position' => $spicyLevel->position,
             ];
 
             if (!$spicyLevel) {
@@ -111,6 +115,11 @@ class SpicyLevelController extends Controller
                     Rule::unique('spicy_levels')->ignore($id)->whereNull('deleted_at'),
                 ],
                 'description' => 'nullable',
+                'position' => [
+                    'required',
+                    Rule::unique('spicy_levels')->ignore($id)->whereNull('deleted_at'),
+                ],
+
             ]);
 
             $spicyLevel->update($validatedData);

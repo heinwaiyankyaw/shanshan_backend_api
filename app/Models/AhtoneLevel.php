@@ -14,5 +14,6 @@ class AhtoneLevel extends Model
     protected $fillable = [
         'name',
         'description',
+        'position',
     ];
 }

@@ -281,6 +281,74 @@ class SaleController extends Controller
         ]);
     }
 
+    public function show($slipNumber)
+    {
+        try {
+            $sale = Sale::where('order_no', $slipNumber)->first();
+
+            if ($sale->isEmpty()) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Not Found.',
+                    'error' => 'There was no Data',
+                ]);
+            }
+            $saleItems = SaleItem::where('sale_id', $sale->id)->get();
+            $products = [];
+            foreach ($saleItems as $saleItem) {
+                $products[] = [
+                    'product_id' => $saleItem->product->name,
+                    'qty' => $saleItem->qty,
+                    'is_gram' => $saleItem->product->is_gram,
+                    'price' => $saleItem->price,
+                    'total_price' => $saleItem->total_price,
+                ];
+            }
+
+            $data[] = [
+                'id' => $sale->id,
+                'order_no' => $sale->order_no,
+                'payment_type_id' => $sale->payement_type_id,
+                'table_number' => $sale->table_number,
+                'dine_in_or_percel' => $sale->dine_in_or_percel,
+                'sub_total' => $sale->sub_total,
+                'tax' => $sale->tax,
+                'discount' => $sale->discount,
+                'grand_total' => $sale->grand_total,
+                'paid_cash' => $sale->paid_cash,
+                'paid_online' => $sale->paid_online,
+                'created_at' => $sale->created_at,
+                'updated_at' => $sale->updated_at,
+                'menu' => [
+                    'id' => $sale->menu->id,
+                    'name' => $sale->menu->name,
+                ],
+                'spicy_level' => [
+                    'id' => $sale->spicyLevel->id,
+                    'name' => $sale->spicyLevel->name,
+                ],
+                'ahtone_level' => [
+                    'id' => $sale->ahtoneLevel->id,
+                    'name' => $sale->ahtoneLevel->name,
+                ],
+                'remark' => $sale->remark,
+                'products' => $products,
+            ];
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Sale was found',
+                'data' => $data,
+            ]);
+        } catch (Exception $th) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Unknown Error.',
+                'error' => $th->getMessage(),
+            ]);
+        }
+    }
+
     protected function checkValidation($request)
     {
         return Validator::make($request->all(), [

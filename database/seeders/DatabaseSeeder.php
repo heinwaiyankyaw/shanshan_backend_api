@@ -21,6 +21,11 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             UserTableSeeder::class,
+            CategoryTableSeeder::class,
+            ProductTableSeeder::class,
+            MenuTableSeeder::class,
+            SpicyLevelTableSeeder::class,
+            AhtoneLevelSeeder::class,
         ]);
     }
 }

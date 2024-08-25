@@ -136,7 +136,7 @@ class SaleController extends Controller
     // Report
     public function daily()
     {
-        $date = Carbon::now()->format('Y-M-d');
+        $date = Carbon::now()->format('Y-m-d');
         $sales = Sale::whereDate('created_at', $date)->get();
 
         $totalSales = $sales->count();
@@ -148,7 +148,7 @@ class SaleController extends Controller
             'total_sales' => $totalSales,
             'total_paid_cash' => $totalPaidCash,
             'total_paid_online' => $totalPaidOnline,
-            'daily_date' => $date,
+            'daily_date' => Carbon::now()->format('Y-M-d'),
             'total_Grands' => $totalPaidCash + $totalPaidOnline,
         ];
 

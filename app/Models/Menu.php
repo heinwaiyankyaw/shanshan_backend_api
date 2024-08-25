@@ -13,5 +13,6 @@ class Menu extends Model
 
     protected $fillable = [
         'name',
+        'is_fish',
     ];
 }

@@ -23,6 +23,7 @@ class MenuController extends Controller
             $data[] = [
                 'id' => $menu->id,
                 'name' => $menu->name,
+                'is_fish' => $menu->is_fish ? true : false,
             ];
         }
         return response()->json([
@@ -36,7 +37,14 @@ class MenuController extends Controller
         try {
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
+                'is_fish' => 'nullable',
             ]);
+
+            if ($validatedData['is_fish'] === true) {
+                $validatedData['is_fish'] = 1;
+            } else {
+                $validatedData['is_fish'] = 0;
+            }
 
             $menu = Menu::create($validatedData);
 
@@ -62,6 +70,7 @@ class MenuController extends Controller
             $menu = [
                 'id' => $menu->id,
                 'name' => $menu->name,
+                'is_fish' => $menu->is_fish ? true : false,
             ];
 
             if (!$menu) {
@@ -99,7 +108,14 @@ class MenuController extends Controller
 
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
+                'is_fish' => 'nullable',
             ]);
+
+            if ($validatedData['is_fish'] === true) {
+                $validatedData['is_fish'] = 1;
+            } else {
+                $validatedData['is_fish'] = 0;
+            }
 
             $menu->update($validatedData);
 

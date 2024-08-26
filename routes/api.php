@@ -83,6 +83,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::prefix('sale')->group(function () {
         Route::post('/', [SaleController::class, 'store']);
         Route::get('lists', [SaleController::class, 'lists']);
+        Route::get('list/{slipNumber}', [SaleController::class, 'show']);
+        Route::post('list/{slipNumber}', [SaleController::class, 'update']);
 
         Route::get('daily', [SaleController::class, 'daily']);
         Route::get('weekly', [SaleController::class, 'weekly']);

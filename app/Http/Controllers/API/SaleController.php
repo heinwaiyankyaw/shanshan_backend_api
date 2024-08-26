@@ -58,21 +58,17 @@ class SaleController extends Controller
                     'paid_online' => $currentMonthSale->paid_online,
                     'created_at' => $currentMonthSale->created_at,
                     'updated_at' => $currentMonthSale->updated_at,
-                    'payment_type' => [
-                        'id' => $currentMonthSale->paymentType->id,
-                        'name' => $currentMonthSale->paymentType->name,
-                    ],
                     'menu' => [
                         'id' => $currentMonthSale->menu->id,
                         'name' => $currentMonthSale->menu->name,
                     ],
                     'spicy_level' => [
-                        'id' => $currentMonthSale->spicyLevel->id,
-                        'name' => $currentMonthSale->spicyLevel->name,
+                        'id' => $currentMonthSale->spicy_level_id ? $currentMonthSale->spicyLevel->id : null,
+                        'name' => $currentMonthSale->spicy_level_id ? $currentMonthSale->spicyLevel->name : null,
                     ],
                     'ahtone_level' => [
-                        'id' => $currentMonthSale->ahtoneLevel->id,
-                        'name' => $currentMonthSale->ahtoneLevel->name,
+                        'id' => $currentMonthSale->ahtone_level_id ? $currentMonthSale->ahtoneLevel->id : null,
+                        'name' => $currentMonthSale->ahtone_level_id ? $currentMonthSale->ahtoneLevel->name : null,
                     ],
                     'remark' => $currentMonthSale->remark,
                     'products' => $products,
@@ -130,7 +126,60 @@ class SaleController extends Controller
                 'error' => $th->getMessage(),
             ]);
         }
+    }
 
+    public function update(Request $request, $slipNumber)
+    {
+        try {
+            $userID = Auth::user()->id;
+            $validatedData = $this->checkValidation($request);
+            $validatedData['user_id'] = $userID;
+            $products = $validatedData['products'];
+            unset($validatedData['products']);
+
+            $sale = Sale::where('order_no', $slipNumber)->first();
+            $sale->update($validatedData);
+
+            $existingSaleItems = $sale->saleItems->keyBy('product_id');
+            foreach ($products as $product) {
+                if (isset($existingSaleItems[$product['product_id']])) {
+                    $saleItem = $existingSaleItems[$product['product_id']];
+                    $saleItem->update([
+                        'qty' => $product['qty'],
+                        'price' => $product['price'],
+                        'total_price' => $product['total_price'],
+                    ]);
+                    $existingSaleItems->forget($product['product_id']);
+                } else {
+                    SaleItem::create([
+                        'sale_id' => $sale->id,
+                        'product_id' => $product['product_id'],
+                        'qty' => $product['qty'],
+                        'price' => $product['price'],
+                        'total_price' => $product['total_price'],
+                    ]);
+                }
+            }
+
+            SaleItem::whereIn('id', $existingSaleItems->pluck('id'))->delete();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Sale was updated successfully.',
+            ], 200);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => 422,
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ]);
+        } catch (Exception $th) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Unknown Error.',
+                'error' => $th->getMessage(),
+            ]);
+        }
     }
 
     // Report
@@ -279,6 +328,74 @@ class SaleController extends Controller
             'message' => 'Current Month Sale was fetched.',
             'data' => $data,
         ]);
+    }
+
+    public function show($slipNumber)
+    {
+        try {
+            $sale = Sale::where('order_no', $slipNumber)->first();
+
+            if (!$sale) {
+                return response()->json([
+                    'message' => 'Not Found.',
+                    'error' => 'There was no data.',
+                ], 404);
+            }
+
+            $saleItems = SaleItem::where('sale_id', $sale->id)->get();
+            $products = [];
+            foreach ($saleItems as $saleItem) {
+                $products[] = [
+                    'product_id' => $saleItem->product->name,
+                    'qty' => $saleItem->qty,
+                    'is_gram' => $saleItem->product->is_gram,
+                    'price' => $saleItem->price,
+                    'total_price' => $saleItem->total_price,
+                ];
+            }
+
+            $data[] = [
+                'id' => $sale->id,
+                'order_no' => $sale->order_no,
+                'payment_type_id' => $sale->payement_type_id,
+                'table_number' => $sale->table_number,
+                'dine_in_or_percel' => $sale->dine_in_or_percel,
+                'sub_total' => $sale->sub_total,
+                'tax' => $sale->tax,
+                'discount' => $sale->discount,
+                'grand_total' => $sale->grand_total,
+                'paid_cash' => $sale->paid_cash,
+                'paid_online' => $sale->paid_online,
+                'created_at' => $sale->created_at,
+                'updated_at' => $sale->updated_at,
+                'menu' => [
+                    'id' => $sale->menu->id,
+                    'name' => $sale->menu->name,
+                ],
+                'spicy_level' => [
+                    'id' => $sale->spicyLevel->id,
+                    'name' => $sale->spicyLevel->name,
+                ],
+                'ahtone_level' => [
+                    'id' => $sale->ahtoneLevel->id,
+                    'name' => $sale->ahtoneLevel->name,
+                ],
+                'remark' => $sale->remark,
+                'products' => $products,
+            ];
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Sale was found',
+                'data' => $data,
+            ]);
+        } catch (Exception $th) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Unknown Error.',
+                'error' => $th->getMessage(),
+            ]);
+        }
     }
 
     protected function checkValidation($request)

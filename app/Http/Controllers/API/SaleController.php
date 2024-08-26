@@ -58,21 +58,17 @@ class SaleController extends Controller
                     'paid_online' => $currentMonthSale->paid_online,
                     'created_at' => $currentMonthSale->created_at,
                     'updated_at' => $currentMonthSale->updated_at,
-                    'payment_type' => [
-                        'id' => $currentMonthSale->paymentType->id,
-                        'name' => $currentMonthSale->paymentType->name,
-                    ],
                     'menu' => [
                         'id' => $currentMonthSale->menu->id,
                         'name' => $currentMonthSale->menu->name,
                     ],
                     'spicy_level' => [
-                        'id' => $currentMonthSale->spicyLevel->id,
-                        'name' => $currentMonthSale->spicyLevel->name,
+                        'id' => $currentMonthSale->spicy_level_id ? $currentMonthSale->spicyLevel->id : null,
+                        'name' => $currentMonthSale->spicy_level_id ? $currentMonthSale->spicyLevel->name : null,
                     ],
                     'ahtone_level' => [
-                        'id' => $currentMonthSale->ahtoneLevel->id,
-                        'name' => $currentMonthSale->ahtoneLevel->name,
+                        'id' => $currentMonthSale->ahtone_level_id ? $currentMonthSale->ahtoneLevel->id : null,
+                        'name' => $currentMonthSale->ahtone_level_id ? $currentMonthSale->ahtoneLevel->name : null,
                     ],
                     'remark' => $currentMonthSale->remark,
                     'products' => $products,
@@ -130,7 +126,60 @@ class SaleController extends Controller
                 'error' => $th->getMessage(),
             ]);
         }
+    }
 
+    public function update(Request $request, $slipNumber)
+    {
+        try {
+            $userID = Auth::user()->id;
+            $validatedData = $this->checkValidation($request);
+            $validatedData['user_id'] = $userID;
+            $products = $validatedData['products'];
+            unset($validatedData['products']);
+
+            $sale = Sale::where('order_no', $slipNumber)->first();
+            $sale->update($validatedData);
+
+            $existingSaleItems = $sale->saleItems->keyBy('product_id');
+            foreach ($products as $product) {
+                if (isset($existingSaleItems[$product['product_id']])) {
+                    $saleItem = $existingSaleItems[$product['product_id']];
+                    $saleItem->update([
+                        'qty' => $product['qty'],
+                        'price' => $product['price'],
+                        'total_price' => $product['total_price'],
+                    ]);
+                    $existingSaleItems->forget($product['product_id']);
+                } else {
+                    SaleItem::create([
+                        'sale_id' => $sale->id,
+                        'product_id' => $product['product_id'],
+                        'qty' => $product['qty'],
+                        'price' => $product['price'],
+                        'total_price' => $product['total_price'],
+                    ]);
+                }
+            }
+
+            SaleItem::whereIn('id', $existingSaleItems->pluck('id'))->delete();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Sale was updated successfully.',
+            ], 200);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => 422,
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ]);
+        } catch (Exception $th) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Unknown Error.',
+                'error' => $th->getMessage(),
+            ]);
+        }
     }
 
     // Report
@@ -286,13 +335,13 @@ class SaleController extends Controller
         try {
             $sale = Sale::where('order_no', $slipNumber)->first();
 
-            if ($sale->isEmpty()) {
+            if (!$sale) {
                 return response()->json([
-                    'status' => 404,
                     'message' => 'Not Found.',
-                    'error' => 'There was no Data',
-                ]);
+                    'error' => 'There was no data.',
+                ], 404);
             }
+
             $saleItems = SaleItem::where('sale_id', $sale->id)->get();
             $products = [];
             foreach ($saleItems as $saleItem) {

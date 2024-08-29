@@ -37,9 +37,10 @@ class SaleController extends Controller
                 $products = [];
                 foreach ($saleItems as $saleItem) {
                     $products[] = [
-                        'product_id' => $saleItem->product->name,
+                        'product_id' => $saleItem->product->id,
+                        'name' => $product->product->name,
                         'qty' => $saleItem->qty,
-                        'is_gram' => $saleItem->product->is_gram,
+                        'is_gram' => $saleItem->product->is_gram ? true : false,
                         'price' => $saleItem->price,
                         'total_price' => $saleItem->total_price,
                     ];
@@ -346,9 +347,10 @@ class SaleController extends Controller
             $products = [];
             foreach ($saleItems as $saleItem) {
                 $products[] = [
-                    'product_id' => $saleItem->product->name,
+                    'product_id' => $saleItem->product->id,
+                    'name' => $saleItem->product->name,
                     'qty' => $saleItem->qty,
-                    'is_gram' => $saleItem->product->is_gram,
+                    'is_gram' => $saleItem->product->is_gram ? true : false,
                     'price' => $saleItem->price,
                     'total_price' => $saleItem->total_price,
                 ];

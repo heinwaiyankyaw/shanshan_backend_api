@@ -38,7 +38,7 @@ class SaleController extends Controller
                 foreach ($saleItems as $saleItem) {
                     $products[] = [
                         'product_id' => $saleItem->product->id,
-                        'name' => $product->product->name,
+                        'name' => $saleItem->product->name,
                         'qty' => $saleItem->qty,
                         'is_gram' => $saleItem->product->is_gram ? true : false,
                         'price' => $saleItem->price,

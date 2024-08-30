@@ -20,7 +20,7 @@ class SaleController extends Controller
 
             $currentMonthSales = Sale::whereYear('updated_at', Carbon::now()->year)
                 ->whereMonth('updated_at', Carbon::now()->month)
-            // ->whereDate('updated_at', Carbon::now()->toDateString())
+                ->whereDate('updated_at', Carbon::now()->toDateString())
                 ->orderBy('updated_at', 'desc')
                 ->with(['paymentType', 'menu', 'spicyLevel', 'ahtoneLevel', 'saleItems'])
                 ->paginate($perPage, ['*'], 'page', $page);

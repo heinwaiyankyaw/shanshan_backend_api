@@ -85,6 +85,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('lists', [SaleController::class, 'lists']);
         Route::get('list/{slipNumber}', [SaleController::class, 'show']);
         Route::post('list/{slipNumber}', [SaleController::class, 'update']);
+        Route::get('search', [SaleController::class, 'search']);
 
         Route::get('daily', [SaleController::class, 'daily']);
         Route::get('weekly', [SaleController::class, 'weekly']);

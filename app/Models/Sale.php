@@ -32,6 +32,8 @@ class Sale extends Model
         "paid_cash",
         "paid_online",
         "refund",
+        "pawn_count",
+        "octopus_count",
     ];
 
     public function paymentType()
@@ -53,11 +55,6 @@ class Sale extends Model
     {
         return $this->belongsTo(AhtoneLevel::class);
     }
-
-    // public function remark()
-    // {
-    //     return $this->belongsTo(Remark::class);
-    // }
 
     public function saleItems()
     {

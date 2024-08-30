@@ -20,6 +20,7 @@ class SaleController extends Controller
 
             $currentMonthSales = Sale::whereYear('updated_at', Carbon::now()->year)
                 ->whereMonth('updated_at', Carbon::now()->month)
+            // ->whereDate('updated_at', Carbon::now()->toDateString())
                 ->orderBy('updated_at', 'desc')
                 ->with(['paymentType', 'menu', 'spicyLevel', 'ahtoneLevel', 'saleItems'])
                 ->paginate($perPage, ['*'], 'page', $page);
@@ -57,8 +58,10 @@ class SaleController extends Controller
                     'grand_total' => $currentMonthSale->grand_total,
                     'paid_cash' => $currentMonthSale->paid_cash,
                     'paid_online' => $currentMonthSale->paid_online,
-                    'created_at' => $currentMonthSale->created_at,
-                    'updated_at' => $currentMonthSale->updated_at,
+                    'created_at' => $currentMonthSale->created_at->format('Y-M-d'),
+                    'updated_at' => $currentMonthSale->updated_at->format('Y-M-d'),
+                    'pawn_count' => $currentMonthSale->pawn_count ? $sale->pawn_count : 0,
+                    'octopus_count' => $currentMonthSale->octopus_count ? $sale->octopus_count : 0,
                     'menu' => [
                         'id' => $currentMonthSale->menu->id,
                         'name' => $currentMonthSale->menu->name,
@@ -368,19 +371,21 @@ class SaleController extends Controller
                 'grand_total' => $sale->grand_total,
                 'paid_cash' => $sale->paid_cash,
                 'paid_online' => $sale->paid_online,
-                'created_at' => $sale->created_at,
-                'updated_at' => $sale->updated_at,
+                'created_at' => $sale->created_at->format('Y-M-d'),
+                'updated_at' => $sale->updated_at->format('Y-M-d'),
+                'pawn_count' => $sale->pawn_count ? $sale->pawn_count : 0,
+                'octopus_count' => $sale->octopus_count ? $sale->octopus_count : 0,
                 'menu' => [
                     'id' => $sale->menu->id,
                     'name' => $sale->menu->name,
                 ],
                 'spicy_level' => [
-                    'id' => $sale->spicyLevel->id,
-                    'name' => $sale->spicyLevel->name,
+                    'id' => $sale->spicy_level_id ? $sale->spicyLevel->id : null,
+                    'name' => $sale->spicy_level_id ? $sale->spicyLevel->name : null,
                 ],
                 'ahtone_level' => [
-                    'id' => $sale->ahtoneLevel->id,
-                    'name' => $sale->ahtoneLevel->name,
+                    'id' => $sale->ahtone_level_id ? $sale->ahtoneLevel->id : null,
+                    'name' => $sale->ahtone_level_id ? $sale->ahtoneLevel->name : null,
                 ],
                 'remark' => $sale->remark,
                 'products' => $products,
@@ -389,6 +394,94 @@ class SaleController extends Controller
             return response()->json([
                 'status' => 200,
                 'message' => 'Sale was found',
+                'data' => $data,
+            ]);
+        } catch (Exception $th) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Unknown Error.',
+                'error' => $th->getMessage(),
+            ]);
+        }
+    }
+
+    public function search(Request $request)
+    {
+        try {
+            // Initialize query builder for the Sale model
+            $query = Sale::query();
+            $page = $request['page'] ?? 1;
+            $perPage = 10;
+
+            // Apply filters based on request parameters
+            if ($request->has('order_no')) {
+                $query->where('order_no', 'like', '%' . $request->order_no . '%');
+            }
+
+            // Execute query and get results
+            $sales = $query->paginate($perPage, ['*'], 'page', $page);
+
+            // If no results found
+            if ($sales->isEmpty()) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'No sales found.',
+                    'error' => 'No matching records were found.',
+                ], 404);
+            }
+
+            // Prepare response data
+            $data = [];
+            foreach ($sales->items() as $sale) {
+                $saleItems = SaleItem::where('sale_id', $sale->id)->get();
+                $products = [];
+                foreach ($saleItems as $saleItem) {
+                    $products[] = [
+                        'product_id' => $saleItem->product->id,
+                        'name' => $saleItem->product->name,
+                        'qty' => $saleItem->qty,
+                        'is_gram' => $saleItem->product->is_gram ? true : false,
+                        'price' => $saleItem->price,
+                        'total_price' => $saleItem->total_price,
+                    ];
+                }
+
+                $data[] = [
+                    'id' => $sale->id,
+                    'order_no' => $sale->order_no,
+                    'payment_type_id' => $sale->payement_type_id,
+                    'table_number' => $sale->table_number,
+                    'dine_in_or_percel' => $sale->dine_in_or_percel,
+                    'sub_total' => $sale->sub_total,
+                    'tax' => $sale->tax,
+                    'discount' => $sale->discount,
+                    'grand_total' => $sale->grand_total,
+                    'paid_cash' => $sale->paid_cash,
+                    'paid_online' => $sale->paid_online,
+                    'created_at' => $sale->created_at->format('Y-M-d'),
+                    'updated_at' => $sale->updated_at->format('Y-M-d'),
+                    'pawn_count' => $sale->pawn_count ? $sale->pawn_count : 0,
+                    'octopus_count' => $sale->octopus_count ? $sale->octopus_count : 0,
+                    'menu' => [
+                        'id' => $sale->menu_id ? $sale->menu->id : null,
+                        'name' => $sale->menu_id ? $sale->menu->name : null,
+                    ],
+                    'spicy_level' => [
+                        'id' => $sale->spicy_level_id ? $sale->spicyLevel->id : null,
+                        'name' => $sale->spicy_level_id ? $sale->spicyLevel->name : null,
+                    ],
+                    'ahtone_level' => [
+                        'id' => $sale->ahtone_level_id ? $sale->ahtoneLevel->id : null,
+                        'name' => $sale->ahtone_level_id ? $sale->ahtoneLevel->name : null,
+                    ],
+                    'remark' => $sale->remark,
+                    'products' => $products,
+                ];
+            }
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Sales found',
                 'data' => $data,
             ]);
         } catch (Exception $th) {
@@ -418,6 +511,8 @@ class SaleController extends Controller
             'paid_cash' => 'required_without:paid_online',
             'paid_online' => 'required_without:paid_cash',
             'refund' => 'required',
+            'pawn_count' => 'nullable',
+            'octopus_count' => 'nullable',
             'products' => 'required|array',
         ])->validate();
     }

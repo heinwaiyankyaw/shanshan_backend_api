@@ -427,6 +427,7 @@ class SaleController extends Controller
                     'status' => 404,
                     'message' => 'No sales found.',
                     'error' => 'No matching records were found.',
+                    'data' => [],
                 ], 404);
             }
 

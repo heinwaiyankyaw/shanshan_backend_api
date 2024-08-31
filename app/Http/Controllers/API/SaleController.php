@@ -60,8 +60,8 @@ class SaleController extends Controller
                     'paid_online' => $currentMonthSale->paid_online,
                     'created_at' => $currentMonthSale->created_at->format('Y-M-d'),
                     'updated_at' => $currentMonthSale->updated_at->format('Y-M-d'),
-                    'pawn_count' => $currentMonthSale->pawn_count ? $sale->pawn_count : 0,
-                    'octopus_count' => $currentMonthSale->octopus_count ? $sale->octopus_count : 0,
+                    'pawn_count' => $currentMonthSale->pawn_count ? $currentMonthSale->pawn_count : 0,
+                    'octopus_count' => $currentMonthSale->octopus_count ? $currentMonthSale->octopus_count : 0,
                     'menu' => [
                         'id' => $currentMonthSale->menu->id,
                         'name' => $currentMonthSale->menu->name,

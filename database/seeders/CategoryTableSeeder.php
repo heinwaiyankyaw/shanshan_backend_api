@@ -13,9 +13,6 @@ class CategoryTableSeeder extends Seeder
     public function run(): void
     {
         $datas = [
-            ['name' => 'အသားငါး'],
-            ['name' => 'အသီးအရွှက်'],
-            ['name' => 'အအေး'],
             ['name' => 'အခြား'],
         ];
 

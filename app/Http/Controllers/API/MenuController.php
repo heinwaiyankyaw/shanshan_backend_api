@@ -10,7 +10,7 @@ class MenuController extends Controller
 {
     public function lists()
     {
-        $menus = Menu::orderBy('updated_at', 'desc')->get();
+        $menus = Menu::where('id', '!=', 3)->orderBy('updated_at', 'desc')->get();
 
         if ($menus->isEmpty()) {
             return response()->json([

@@ -262,8 +262,11 @@ class SaleController extends Controller
 
     public function pastMonth()
     {
-        $startOfMonth = Carbon::now()->subMonth()->startOfMonth()->toDateString();
-        $endOfMonth = Carbon::now()->subMonth()->endOfMonth()->toDateString();
+        // $startOfMonth = Carbon::now()->subMonth()->startOfMonth()->toDateString();
+        // $endOfMonth = Carbon::now()->subMonth()->endOfMonth()->toDateString();
+        $startOfMonth = Carbon::now()->firstOfMonth()->subMonth()->toDateString();
+        $endOfMonth = Carbon::now()->firstOfMonth()->subMonth()->endOfMonth()->toDateString();
+
         $sales = Sale::whereBetween('created_at', [$startOfMonth, $endOfMonth])
             ->get();
 
@@ -277,7 +280,7 @@ class SaleController extends Controller
             'total_sales' => $totalSales,
             'total_paid_cash' => $totalPaidCash,
             'total_paid_online' => $totalPaidOnline,
-            'past_month' => Carbon::now()->subMonth()->format('Y-M'),
+            'past_month' => Carbon::now()->firstOfMonth()->subMonth()->format('Y-M'),
             'total_Grands' => $totalPaidCash + $totalPaidOnline,
         ];
 

@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Sale;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class deleteSaleAfterTwoMonth extends Command
 {
@@ -34,6 +35,9 @@ class deleteSaleAfterTwoMonth extends Command
             $sale->saleItems()->forceDelete();
             $sale->forceDelete();
         }
+
+        Log::info("Old Sales data deleted was runned with count :" . $oldSales->count);
+
         $this->info('Old sales and sale items deleted successfully.');
     }
 }
